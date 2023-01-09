@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Signature Form</title>
+</head>
+<body>
+  <form id="signature-form">
+    <canvas id="signature-canvas" width="400" height="100"></canvas>
+    <br>
+    <button type="button" id="clear-button">Clear</button>
+    <button type="submit">Submit</button>
+    <input type="hidden" name="signature" id="signature-input">
+  </form>
+  <script>
+    const canvas = document.getElementById('signature-canvas');
+    const context = canvas.getContext('2d');
+    const clearButton = document.getElementById('clear-button');
+    const signatureInput = document.getElementById('signature-input');
+
+    let isDrawing = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    canvas.addEventListener('mousedown', (e) => {
+      isDrawing = true;
+      lastX = e.offsetX;
+      lastY = e.offsetY;
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+      if (isDrawing) {
+        context.beginPath();
+        context.moveTo(lastX, lastY);
+        context.lineTo(e.offsetX, e.offsetY);
+        context.stroke();
+        lastX = e.offsetX;
+        lastY = e.offsetY;
+      }
+    });
+
+    canvas.addEventListener('mouseup', () => {
+      isDrawing = false;
+      const signatureData = canvas.toDataURL();
+      signatureInput.value = signatureData;
+    });
+
+    canvas.addEventListener('mouseout', () => {
+      isDrawing = false;
+    });
+
+    clearButton.addEventListener('click', () => {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      signatureInput.value = '';
+    });
+
+    const form = document.getElementById('signature-form');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      // You can now submit the signature data stored in the hidden input on your form
+    });
+  </script>
+</body>
+</html>
